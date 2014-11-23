@@ -1,0 +1,10 @@
+build/win/ipch/
+build/win/vibrant.sdf
+build/win/vibrant.v12.suo
+build/win/vibrant/Debug/
+demos/build/win/Debug/
+demos/build/win/basic/Debug/
+demos/build/win/demos.opensdf
+demos/build/win/demos.sdf
+demos/build/win/demos.v12.suo
+demos/build/win/ipch/
