@@ -4,8 +4,17 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 12.0.31101.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "basic", "basic\basic.vcxproj", "{7F595498-3022-4733-AF52-8D0E59476E86}"
+	ProjectSection(ProjectDependencies) = postProject
+		{CE2C5203-0F9D-4840-B5F7-35FCA42BB132} = {CE2C5203-0F9D-4840-B5F7-35FCA42BB132}
+		{D8B99DA8-4D93-4ACA-B858-DF7682F0D3A0} = {D8B99DA8-4D93-4ACA-B858-DF7682F0D3A0}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "vibrant", "..\..\..\build\win\vibrant\vibrant.vcxproj", "{CE2C5203-0F9D-4840-B5F7-35FCA42BB132}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "vibrant-cairo", "..\..\..\build\win\vibrant-cairo\vibrant-cairo.vcxproj", "{D8B99DA8-4D93-4ACA-B858-DF7682F0D3A0}"
+	ProjectSection(ProjectDependencies) = postProject
+		{CE2C5203-0F9D-4840-B5F7-35FCA42BB132} = {CE2C5203-0F9D-4840-B5F7-35FCA42BB132}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +30,10 @@ Global
 		{CE2C5203-0F9D-4840-B5F7-35FCA42BB132}.Debug|Win32.Build.0 = Debug|Win32
 		{CE2C5203-0F9D-4840-B5F7-35FCA42BB132}.Release|Win32.ActiveCfg = Release|Win32
 		{CE2C5203-0F9D-4840-B5F7-35FCA42BB132}.Release|Win32.Build.0 = Release|Win32
+		{D8B99DA8-4D93-4ACA-B858-DF7682F0D3A0}.Debug|Win32.ActiveCfg = Debug|Win32
+		{D8B99DA8-4D93-4ACA-B858-DF7682F0D3A0}.Debug|Win32.Build.0 = Debug|Win32
+		{D8B99DA8-4D93-4ACA-B858-DF7682F0D3A0}.Release|Win32.ActiveCfg = Release|Win32
+		{D8B99DA8-4D93-4ACA-B858-DF7682F0D3A0}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

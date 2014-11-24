@@ -11,6 +11,8 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\include\vibrant\position.hpp" />
+    <ClInclude Include="..\..\..\include\vibrant\renderable.hpp" />
     <ClInclude Include="..\..\..\include\vibrant\vector.hpp" />
     <ClInclude Include="..\..\..\include\vibrant\vibrant.hpp" />
     <ClInclude Include="..\..\..\source\pch.hpp" />
@@ -50,7 +52,7 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>..\..\..\..\entityx;$(IncludePath)</IncludePath>
+    <IncludePath>..\..\..\..\entityx;C:\Boost\include\boost-1_57;..\..\..\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
