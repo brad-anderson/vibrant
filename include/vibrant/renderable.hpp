@@ -4,24 +4,41 @@
 #include "entityx/entityx.h"
 #include "boost/variant.hpp"
 
-#include "vibrant/vector.hpp"
+#include "vibrant/color.hpp"
 
 namespace vibrant {
 
+struct Stroke
+{
+	double width;
+	Rgb color;
+	// TODO: Style
+};
+
+struct Fill
+{
+	Rgb color;
+	// TODO: Gradients
+};
+
+
 struct Line
 {
-	Line(Vector2d point1, Vector2d point2) : point1(point1), point2(point2) { }
+	// rotates around position of Body
 
-	Vector2d point1;
-	Vector2d point2;
+	Line(Stroke stroke) : stroke(stroke) { }
+
+	Stroke stroke;
 };
 
 struct Rectangle
 {
-	Rectangle(Vector2d point, Vector2d size) : point(point), size(size) { }
+	// rotates around center of Body
 
-	Vector2d point;
-	Vector2d size;
+	Rectangle(Stroke stroke, Fill fill) : stroke(stroke), fill(fill) { }
+
+	Stroke stroke;
+	Fill fill;
 };
 
 

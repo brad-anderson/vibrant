@@ -6,6 +6,7 @@ namespace vibrant {
 template<typename Ty>
 struct Vector2
 {
+	Vector2() : x(0), y(0) { }
 	Vector2(Ty arg_x, Ty arg_y) : x(arg_x), y(arg_y) { }
 
 	Ty x;

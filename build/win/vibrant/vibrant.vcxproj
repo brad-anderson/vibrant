@@ -11,13 +11,15 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\include\vibrant\position.hpp" />
+    <ClInclude Include="..\..\..\include\vibrant\body.hpp" />
+    <ClInclude Include="..\..\..\include\vibrant\color.hpp" />
     <ClInclude Include="..\..\..\include\vibrant\renderable.hpp" />
     <ClInclude Include="..\..\..\include\vibrant\vector.hpp" />
     <ClInclude Include="..\..\..\include\vibrant\vibrant.hpp" />
     <ClInclude Include="..\..\..\source\pch.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\..\source\color.cpp" />
     <ClCompile Include="..\..\..\source\generate_pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
     </ClCompile>

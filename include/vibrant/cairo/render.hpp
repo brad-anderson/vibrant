@@ -4,8 +4,6 @@
 #include "entityx/entityx.h"
 #include "cairo/cairo.h"
 
-#include "vibrant/position.hpp"
-
 namespace vibrant {
 
 class CairoRenderSystem : public entityx::System < CairoRenderSystem >

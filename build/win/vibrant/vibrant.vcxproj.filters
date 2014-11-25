@@ -24,15 +24,21 @@
     <ClInclude Include="..\..\..\include\vibrant\vector.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\include\vibrant\position.hpp">
+    <ClInclude Include="..\..\..\include\vibrant\renderable.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\include\vibrant\renderable.hpp">
+    <ClInclude Include="..\..\..\include\vibrant\body.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\vibrant\color.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\source\generate_pch.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\color.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
