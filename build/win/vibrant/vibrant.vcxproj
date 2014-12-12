@@ -13,6 +13,7 @@
   <ItemGroup>
     <ClInclude Include="..\..\..\include\vibrant\body.hpp" />
     <ClInclude Include="..\..\..\include\vibrant\color.hpp" />
+    <ClInclude Include="..\..\..\include\vibrant\ease.hpp" />
     <ClInclude Include="..\..\..\include\vibrant\renderable.hpp" />
     <ClInclude Include="..\..\..\include\vibrant\vector.hpp" />
     <ClInclude Include="..\..\..\include\vibrant\vibrant.hpp" />
@@ -20,8 +21,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\source\color.cpp" />
+    <ClCompile Include="..\..\..\source\ease.cpp" />
     <ClCompile Include="..\..\..\source\generate_pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
   </ItemGroup>
   <PropertyGroup Label="Globals">
@@ -56,6 +59,9 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <IncludePath>..\..\..\..\entityx;C:\Boost\include\boost-1_57;..\..\..\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <IncludePath>..\..\..\..\entityx;C:\Boost\include\boost-1_57;..\..\..\include;$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <PrecompiledHeader>Use</PrecompiledHeader>
@@ -79,6 +85,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
+      <PrecompiledHeaderFile>pch.hpp</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

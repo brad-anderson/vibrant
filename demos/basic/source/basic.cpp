@@ -1,4 +1,6 @@
 #include <wx/wx.h>
+#include <chrono>
+#include <functional>
 #include "wx/dcbuffer.h"
 #include "cairo/cairo.h"
 #if defined(CAIRO_HAS_WIN32_SURFACE)
@@ -16,6 +18,8 @@
 
 using namespace entityx;
 using namespace vibrant;
+using namespace std;
+using namespace std::placeholders;
 
 class SimpleVibrantApp : public wxApp
 {
@@ -23,7 +27,7 @@ public:
 	bool OnInit() override;
 };
 
-struct Wiggle : entityx::Component<Wiggle>
+/*struct Wiggle : entityx::Component<Wiggle>
 {
 	Wiggle(double size, double period, double time=0) : size(size), period(period), time(time) { }
 
@@ -46,47 +50,59 @@ public:
 		{
 			wiggle->time += dt;
 			body->position.x += sin(fmod(wiggle->time, wiggle->period) / wiggle->period * 2*M_PI) * wiggle->size/2;
-			body->rotation += 0.01;
+			body->position.y += cos(fmod(wiggle->time, wiggle->period) / wiggle->period * 2*M_PI) * wiggle->size/2;
+			//body->rotation += 0.01 * dt;
 		}
 	}
-};
+};*/
 
 class BasicEntities : public EntityX {
 public:
 	BasicEntities()
 	{
-		systems.add<WiggleSystem>();
+		//systems.add<WiggleSystem>();
+		systems.add<EasingSystem<double, Vector2d, Body>>();
 		render_system = std::make_shared<CairoRenderSystem>();
 		systems.add(render_system);
 		systems.configure();
 
-		for (int i = 0; i < 200; ++i)
+		for (int i = 0; i < 100; ++i)
 		{
 			entityx::Entity entity = entities.create();
-			if (i % 2)
+			if (false && i % 2)
 			{
 				double y = rand() % 700 * 0.8 + 70;
 				entity.assign<Body>(Vector2d(rand() % 1260*0.8 + 126, y),
 									Vector2d(rand() % 5, rand() % 50),
 									rand() % 360 / 360.0 * 2*M_PI);
-				entity.assign<Renderable>(Line({ 2, Rgb(rand() % 255 / 255.0,
-														rand() % 255 / 255.0,
-														rand() % 255 / 255.0) }));
-				entity.assign<Wiggle>(1, 1, y/700);
+				entity.assign<Renderable>(Line({ 2, Rgb(y/700.0,
+														0,//rand() % 255 / 255.0,
+														0) }));// rand() % 255 / 255.0) }));
+				//entity.assign<Wiggle>(10, 1000, y/700*1000);
 			}
 			else
 			{
 				double y = rand() % int(720 * 0.8) + 20;
-				entity.assign<Body>(Vector2d(rand() % int(1280*0.8) + 128, y),
+				entity.assign<Body>(Vector2d(rand() % 1280, y),
 									Vector2d(rand() % 40 + 10, rand() % 40 + 10),
-									rand() % 360 / 360.0 * 2*M_PI);
-				entity.assign<Renderable>(vibrant::Rectangle({ 2, Rgb(rand() % 255 / 255.0,
-																	  rand() % 255 / 255.0,
-																	  rand() % 255 / 255.0) },
-															 { Rgb(rand() % 255 / 255.0,
-																   rand() % 255 / 255.0,
-																   rand() % 255 / 255.0) }));
-				entity.assign<Wiggle>(1, 1, y/700);
+									0/*rand() % 360 / 360.0 * 2*M_PI*/);
+				entity.assign<Renderable>(vibrant::Rectangle({ 2, Rgb(y/700.0, 0, 0) },
+																	  //rand() % 255 / 255.0,
+																	  //rand() % 255 / 255.0) },
+															 { Rgb(y/700.0, 0, 0) }));
+																   //rand() % 255 / 255.0,
+																   //rand() % 255 / 255.0) }));
+				/*entity.assign<Ease<double, Vector2d, Body>>([](Body::Handle body) -> Vector2d& { return body->position; },
+															entity.component<Body>()->position,
+															Vector2d(100, 100),
+															2000,
+															&ease_in_back<double, Vector2d>);*/
+				entity.assign<Ease<double, Vector2d, Body>>([](Body::Handle body) -> Vector2d& { return body->size; },
+															entity.component<Body>()->size,
+															Vector2d(200, 200),
+															y/700 * 700 + 1000,
+															&ease_in_back<double, Vector2d>);
+				//entity.assign<Wiggle>(10, 1000, y/700*1000);
 			}
 		}
 	}
@@ -94,7 +110,8 @@ public:
 	void update(TimeDelta dt, cairo_t* context)
 	{
 		render_system->setContext(context);
-		systems.update<WiggleSystem>(dt);
+		//systems.update<WiggleSystem>(dt);
+		systems.update<EasingSystem<double, Vector2d, Body>>(dt);
 		systems.update<CairoRenderSystem>(dt);
 	}
 
@@ -124,12 +141,16 @@ public:
 
 	void onPaint(wxPaintEvent& event);
 	void onRefreshTimer(wxTimerEvent& event) { Refresh(); }
+	void onIdle(wxIdleEvent& event);
+	void draw(wxDC& dc);
 
 private:
 	BasicEntities basic_entities;
 	cairo_surface_t* backbuffer = nullptr;
 	Vector2u backbuffer_size;
 	wxTimer refresh_timer;
+	bool first_frame = true;
+	std::chrono::steady_clock::time_point last_frame_end;
 
 
     wxDECLARE_EVENT_TABLE();
@@ -138,7 +159,8 @@ private:
 
 wxBEGIN_EVENT_TABLE(SimpleVibrantFrame, wxFrame)
 	EVT_PAINT(SimpleVibrantFrame::onPaint)
-	EVT_TIMER(-1, SimpleVibrantFrame::onRefreshTimer)
+	//EVT_TIMER(-1, SimpleVibrantFrame::onRefreshTimer)
+	EVT_IDLE(SimpleVibrantFrame::onIdle)
 wxEND_EVENT_TABLE()
 
 wxIMPLEMENT_APP(SimpleVibrantApp);
@@ -155,7 +177,7 @@ bool SimpleVibrantApp::OnInit()
 SimpleVibrantFrame::SimpleVibrantFrame(const wxString& title, const wxPoint& pos, const wxSize& size)
 	: wxFrame(NULL, wxID_ANY, title, pos, size), refresh_timer(this)
 {
-	refresh_timer.Start(15);
+	//refresh_timer.Start(15);
 	SetBackgroundStyle(wxBG_STYLE_PAINT);
 }
 
@@ -164,10 +186,25 @@ void SimpleVibrantFrame::onPaint(wxPaintEvent& event)
 	wxPaintDC dc(this); // mark as painted
 	dc.DestroyClippingRegion();
 
+	draw(dc);
+}
+
+void SimpleVibrantFrame::draw(wxDC& dc)
+{
+	auto current_time = std::chrono::steady_clock::now();
+	if (first_frame)
+	{
+		last_frame_end = current_time;
+		first_frame = false;
+	}
+
+	auto delta_ms = std::chrono::duration_cast<std::chrono::nanoseconds>(current_time - last_frame_end).count() / 1000000.0;
+	if (delta_ms < 16.67)
+		return;
 
 	// Create or recreate the back buffer
 	wxSize client_size = GetClientSize();
-	if( backbuffer == nullptr || backbuffer_size.x < client_size.GetWidth() || backbuffer_size.y < client_size.GetHeight())
+	if( backbuffer == nullptr || backbuffer_size.x < (unsigned int)client_size.GetWidth() || backbuffer_size.y < (unsigned int)client_size.GetHeight())
 	{
 		if(backbuffer)
 			cairo_surface_destroy(backbuffer);
@@ -183,7 +220,7 @@ void SimpleVibrantFrame::onPaint(wxPaintEvent& event)
 
 
 	// Update systems to render
-	basic_entities.update(0.015, context);
+	basic_entities.update(delta_ms, context);
 
 
 #if defined(CAIRO_HAS_WIN32_SURFACE)
@@ -204,4 +241,14 @@ void SimpleVibrantFrame::onPaint(wxPaintEvent& event)
 	cairo_surface_destroy(surface);
 
 	cairo_destroy(context);
+
+	last_frame_end = std::chrono::steady_clock::now();
 }
+
+void SimpleVibrantFrame::onIdle(wxIdleEvent& event)
+{
+	wxClientDC dc(this);
+    draw(dc);
+    event.RequestMore(); // render continuously, not only once on idle
+}
+

@@ -1,9 +1,16 @@
+build/win/Debug/
 build/win/ipch/
 build/win/vibrant.sdf
 build/win/vibrant.v12.suo
 build/win/vibrant/Debug/
+build/win/vibrant/Release/
+build/win/vibrant/vibrant.vcxproj.user
+build/win/vibrant-cairo/Debug/
+build/win/vibrant-cairo/Release/
 demos/build/win/Debug/
+demos/build/win/Release/
 demos/build/win/basic/Debug/
+demos/build/win/basic/Release/
 demos/build/win/demos.opensdf
 demos/build/win/demos.sdf
 demos/build/win/demos.v12.suo
