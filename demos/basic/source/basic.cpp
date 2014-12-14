@@ -27,96 +27,73 @@ public:
 	bool OnInit() override;
 };
 
-/*struct Wiggle : entityx::Component<Wiggle>
-{
-	Wiggle(double size, double period, double time=0) : size(size), period(period), time(time) { }
 
-	double size;
-	double period;
-	double time;
-};
-
-class WiggleSystem : public entityx::System < WiggleSystem >
-{
-public:
-	WiggleSystem() { }
-
-	void update(entityx::EntityManager &es, entityx::EventManager &events, entityx::TimeDelta dt) override
-	{
-		Wiggle::Handle wiggle;
-		Body::Handle body;
-
-		for (entityx::Entity entity : es.entities_with_components(wiggle, body))
-		{
-			wiggle->time += dt;
-			body->position.x += sin(fmod(wiggle->time, wiggle->period) / wiggle->period * 2*M_PI) * wiggle->size/2;
-			body->position.y += cos(fmod(wiggle->time, wiggle->period) / wiggle->period * 2*M_PI) * wiggle->size/2;
-			//body->rotation += 0.01 * dt;
-		}
-	}
-};*/
 
 class BasicEntities : public EntityX {
 public:
 	BasicEntities()
 	{
-		//systems.add<WiggleSystem>();
 		systems.add<EasingSystem<double, Vector2d, Body>>();
 		systems.add<EasingSystem<double, Radians, Body>>();
 		render_system = std::make_shared<CairoRenderSystem>();
 		systems.add(render_system);
 		systems.configure();
 
-		for (int i = 0; i < 500; ++i)
+
+		const int ENTITY_COUNT = 750;
+		for (int i = 0; i < ENTITY_COUNT; ++i)
 		{
 			entityx::Entity entity = entities.create();
-			if (false && i % 2)
-			{
-				double y = rand() % 700 * 0.8 + 70;
-				entity.assign<Body>(Vector2d(rand() % 1260*0.8 + 126, y),
-									Vector2d(rand() % 5, rand() % 50),
-									rand() % 360 / 360.0 * 2*M_PI);
-				entity.assign<Renderable>(Line({ 2, Rgb(y/700.0,
-														0,//rand() % 255 / 255.0,
-														0) }));// rand() % 255 / 255.0) }));
-				//entity.assign<Wiggle>(10, 1000, y/700*1000);
-			}
-			else
-			{
-				double y = rand() % int(720 * 0.8) + 20;
-				entity.assign<Body>(Vector2d(rand() % 1280, y),
-									Vector2d(100, 100),
-									rand() % 360 / 360.0 * 2*M_PI);
-				entity.assign<Renderable>(vibrant::Rectangle({ 2, Rgb(y/700.0, 0, 0) },
-																	  //rand() % 255 / 255.0,
-																	  //rand() % 255 / 255.0) },
-															 { Rgb(y/700.0, 0, 0) }));
-																   //rand() % 255 / 255.0,
-																   //rand() % 255 / 255.0) }));
-				/*entity.assign<Ease<double, Vector2d, Body>>([](Body::Handle body) -> Vector2d& { return body->position; },
-															entity.component<Body>()->position,
-															Vector2d(640, 360),
-															3000,
-															&ease_out_quad<double, Vector2d>);*/
-				entity.assign<Ease<double, Vector2d, Body>>([](Body::Handle body) -> Vector2d& { return body->size; },
-															entity.component<Body>()->size,
-															Vector2d(5, 5),
-															5000,
-															&ease_out_quad<double, Vector2d>);
-				entity.assign<Ease<double, Radians, Body>>([](Body::Handle body) -> Radians& { return body->rotation; },
-															entity.component<Body>()->rotation,
-															6*M_PI,
-															5000,
-															&ease_inout_sine<double, Radians>);
-				//entity.assign<Wiggle>(10, 1000, y/700*1000);
-			}
+
+			entity.assign<Body>(Vector2d(sin(i/(double)ENTITY_COUNT * 2*M_PI)*300 + 640-50,
+										 cos(i/(double)ENTITY_COUNT * 2*M_PI)*300 + 360-50),
+								Vector2d(100, 100),
+								rand() % 360 / 360.0 * 2 * M_PI);
+			entity.assign<Renderable>(vibrant::Rectangle({ 0, Hsv(0,		0,	0, 0) },
+														 {    Hsv(i/(double)ENTITY_COUNT,	1,	1, 0.015) }));
+
+			// TODO: DSL for easing because this is clunky
+			entity.assign<Ease<double, Vector2d, Body>>([](Body::Handle body) -> Vector2d& { return body->position; },
+														entity.component<Body>()->position,
+														Vector2d(640-50, 360-50),
+														9000,
+														&ease_out_elastic<double, Vector2d>);
+			/* TODO: Support more than one easing for a given type
+			entity.assign<Ease<double, Vector2d, Body>>([](Body::Handle body) -> Vector2d& { return body->size; },
+														entity.component<Body>()->size,
+														Vector2d(5, 5),
+														10000,
+														&ease_out_quad<double, Vector2d>);*/
+			entity.assign<Ease<double, Radians, Body>>([](Body::Handle body) -> Radians& { return body->rotation; },
+														entity.component<Body>()->rotation,
+														20*M_PI,
+														10000,
+														&ease_inout_sine<double, Radians>);
 		}
+
+		/*entityx::Entity entity = entities.create();
+		double y = rand() % int(720 * 0.8) + 20;
+		entity.assign<Body>(Vector2d(640-50, 360-50),
+							Vector2d(10, 10),
+							rand() % 360 / 360.0 * 2*M_PI);
+		entity.assign<Renderable>(vibrant::Rectangle({ 0, Hsv(0,		0,	0) },
+													 {    Rgb(1,	1,	1) }));
+		entity.assign<Ease<double, Vector2d, Body>>([](Body::Handle body) -> Vector2d& { return body->size; },
+													entity.component<Body>()->size,
+													Vector2d(100, 100),
+													10000,
+													&ease_out_quad<double, Vector2d>);
+		entity.assign<Ease<double, Radians, Body>>([](Body::Handle body) -> Radians& { return body->rotation; },
+													entity.component<Body>()->rotation,
+													20*M_PI,
+													10000,
+													&ease_inout_sine<double, Radians>);*/
+
 	}
 
 	void update(TimeDelta dt, cairo_t* context)
 	{
 		render_system->setContext(context);
-		//systems.update<WiggleSystem>(dt);
 		systems.update<EasingSystem<double, Vector2d, Body>>(dt);
 		systems.update<EasingSystem<double, Radians, Body>>(dt);
 		systems.update<CairoRenderSystem>(dt);

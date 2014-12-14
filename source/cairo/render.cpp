@@ -26,7 +26,9 @@ public:
 		cairo_line_to(context, line_length, 0);
 
 		Rgb color = line.stroke.color;
-		cairo_set_source_rgb(context, color.r, color.g, color.b);
+		// TODO: Using rgba on PDF/Postfix/Print might degrade to bitmaps even if alpha is fully opaque.
+		//       Confirm if this is true or not.
+		cairo_set_source_rgba(context, color.r, color.g, color.b, color.a);
 		cairo_set_line_width(context, line.stroke.width);
 		cairo_stroke(context);
 
@@ -41,17 +43,29 @@ public:
 		cairo_rotate(context, body->rotation);
 		cairo_rectangle(context,
 						-body->size.x / 2, -body->size.y / 2,
-						body->size.x, body->size.y);
+						 body->size.x, body->size.y);
 
 		Rgb fill_color = rect.fill.color;
-		cairo_set_source_rgb(context, fill_color.r, fill_color.g, fill_color.b);
+		// TODO: Using rgba on PDF/Postfix/Print might degrade to bitmaps even if alpha is fully opaque.
+		//       Confirm if this is true or not.
+		cairo_set_source_rgba(context, fill_color.r, fill_color.g, fill_color.b, fill_color.a);
 		cairo_fill_preserve(context);
 
-		cairo_set_line_width(context, rect.stroke.width);
-		Rgb stroke_color = rect.stroke.color;
-		cairo_set_source_rgb(context, stroke_color.r, stroke_color.g, stroke_color.b);
 
-		cairo_stroke(context);
+		if (fabs(rect.stroke.width) > 0.00001)
+		{
+			cairo_set_line_width(context, rect.stroke.width);
+			Rgb stroke_color = rect.stroke.color;
+			// TODO: Using rgba on PDF/Postfix/Print might degrade to bitmaps even if alpha is fully opaque.
+			//       Confirm if this is true or not.
+			cairo_set_source_rgba(context, stroke_color.r, stroke_color.g, stroke_color.b, stroke_color.a);
+
+			cairo_stroke(context);
+		}
+		else
+		{
+			cairo_new_path(context);
+		}
 
 
 		cairo_restore(context);

@@ -9,32 +9,32 @@ struct Hsv;
 
 struct Rgb
 {
-	Rgb(double r, double g, double b) : r(r), g(g), b(b) { }
+	Rgb(double r, double g, double b, double a=1.0) : r(r), g(g), b(b), a(a) { }
 
 	operator Hsl() const;
 	operator Hsv() const;
 
-	double r, g, b;
+	double r, g, b, a;
 };
 
 struct Hsl
 {
-	Hsl(double h, double s, double l) : h(h), s(s), l(l) { }
+	Hsl(double h, double s, double l, double a=1.0) : h(h), s(s), l(l), a(a) { }
 
 	operator Rgb() const;
 	operator Hsv() const;
 
-	double h, s, l;
+	double h, s, l, a;
 };
 
 struct Hsv
 {
-	Hsv(double h, double s, double v) : h(h), s(s), v(v) { }
+	Hsv(double h, double s, double v, double a=1.0) : h(h), s(s), v(v), a(a) { }
 
 	operator Rgb() const;
 	operator Hsl() const;
 
-	double h, s, v;
+	double h, s, v, a;
 };
 
 }

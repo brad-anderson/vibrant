@@ -12,7 +12,7 @@ Rgb::operator Hsl() const
 	double max = std::max(r, std::max(g, b));
 	double delta = max - min;
 
-	Hsl color{ 0, 0, (max + min) / 2 };
+	Hsl color{ 0, 0, (max + min) / 2, a };
 
 	if (fabs(delta) < 0.000001)
 	{
@@ -72,7 +72,7 @@ Rgb::operator Hsv() const
 	double max = std::max(r, std::max(g, b));
 	double delta = max - min;
 
-	Hsv color{ 0, 0, max };
+	Hsv color{ 0, 0, max, a };
 
 	if(fabs(delta) < 0.000001)
 	{
@@ -109,7 +109,7 @@ Hsl::operator Rgb() const
 		   !(s < 0 || s > 1) &&
 		   !(l < 0 || l > 1));
 
-	Rgb color{ 0, 0, 0 };
+	Rgb color{ 0, 0, 0, a };
 
 	if(fabs(s) < 0.000001)
 	{
@@ -143,7 +143,7 @@ Hsv::operator Rgb() const
 		   !(s < 0 || s > 1) &&
 		   !(v < 0 || v > 1));
 
-	Rgb color{ 0, 0, 0 };
+	Rgb color{ 0, 0, 0, a };
 
 	if(fabs(s) < 0.000001)
 	{
