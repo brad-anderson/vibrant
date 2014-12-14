@@ -38,10 +38,15 @@ public:
 		for (entityx::Entity entity : es.entities_with_components(ease, component))
 		{
 			ease->current += dt;
-			if (ease->current > ease->total_time)
-				ease->value_function(component) = ease->beginning + ease->change;
-			else
+			if (ease->current < ease->total_time)
+			{
 				ease->value_function(component) = ease->easing_function(ease->current, ease->beginning, ease->change, ease->total_time);
+			}
+			else
+			{
+				ease->value_function(component) = ease->beginning + ease->change;
+				entity.remove<Ease<Time, Value, Comp>>();
+			}
 		}
 	}
 };

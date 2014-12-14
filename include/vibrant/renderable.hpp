@@ -46,9 +46,10 @@ typedef boost::variant<Line, Rectangle> RenderPrimitive;
 
 struct Renderable : entityx::Component<Renderable>
 {
-	Renderable(RenderPrimitive primitive) : primitive(primitive) { }
+	Renderable(RenderPrimitive primitive, double z) : primitive(primitive), z(z) { }
 
 	RenderPrimitive primitive;
+	double z;
 };
 
 }

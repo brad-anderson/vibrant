@@ -7,6 +7,8 @@
 
 namespace vibrant {
 
+using std::get;
+
 class render_visitor : public boost::static_visitor<>
 {
 public:
@@ -84,18 +86,16 @@ void CairoRenderSystem::update(entityx::EntityManager &es, entityx::EventManager
 	Body::Handle body;
 	Renderable::Handle renderable;
 
+	m_orderedEntities.clear();
+	m_orderedEntities.reserve(es.capacity());
+
 	for (entityx::Entity entity : es.entities_with_components(body, renderable))
-	{
-		boost::apply_visitor(render_visitor(context, body), renderable->primitive);
-	}
-	/*last_update += dt;
-	if (last_update >= 0.5) {
-		std::ostringstream out;
-		out << es.size() << " entities (" << static_cast<int>(1.0 / dt) << " fps)";
-		text.setString(out.str());
-		last_update = 0.0;
-	}
-	target.draw(text);*/
+		m_orderedEntities.push_back(std::make_tuple(renderable, body));
+
+
+	stable_sort(m_orderedEntities.begin(), m_orderedEntities.end(), [](EntityPack e1, EntityPack e2) { return get<0>(e1)->z < get<0>(e2)->z; });
+	for (auto ep : m_orderedEntities)
+		boost::apply_visitor(render_visitor(context, get<1>(ep)), get<0>(ep)->primitive);
 
 	cairo_restore(context);
 }

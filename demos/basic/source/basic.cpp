@@ -50,13 +50,14 @@ public:
 								Vector2d(100, 100),
 								rand() % 360 / 360.0 * 2 * M_PI);
 			entity.assign<Renderable>(vibrant::Rectangle({ 0, Hsv(0,		0,	0, 0) },
-														 {    Hsv(i/(double)ENTITY_COUNT,	1,	1, 0.015) }));
+														 {    Hsv(i/(double)ENTITY_COUNT,	1,	1, 0.015) } ),
+									  i);
 
 			// TODO: DSL for easing because this is clunky
 			entity.assign<Ease<double, Vector2d, Body>>([](Body::Handle body) -> Vector2d& { return body->position; },
 														entity.component<Body>()->position,
 														Vector2d(640-50, 360-50),
-														9000,
+														10000,
 														&ease_out_elastic<double, Vector2d>);
 			/* TODO: Support more than one easing for a given type
 			entity.assign<Ease<double, Vector2d, Body>>([](Body::Handle body) -> Vector2d& { return body->size; },
@@ -66,7 +67,7 @@ public:
 														&ease_out_quad<double, Vector2d>);*/
 			entity.assign<Ease<double, Radians, Body>>([](Body::Handle body) -> Radians& { return body->rotation; },
 														entity.component<Body>()->rotation,
-														20*M_PI,
+														20*M_PI + M_PI/4,
 														10000,
 														&ease_inout_sine<double, Radians>);
 		}

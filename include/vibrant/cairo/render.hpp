@@ -4,6 +4,9 @@
 #include "entityx/entityx.h"
 #include "cairo/cairo.h"
 
+#include "vibrant/renderable.hpp"
+#include "vibrant/body.hpp"
+
 namespace vibrant {
 
 class CairoRenderSystem : public entityx::System < CairoRenderSystem >
@@ -17,7 +20,8 @@ public:
 
 private:
 	cairo_t* context = nullptr;
-	float last_update = 0.0;
+	typedef std::tuple<Renderable::Handle, Body::Handle> EntityPack;
+	std::vector<EntityPack> m_orderedEntities;
 };
 
 }
