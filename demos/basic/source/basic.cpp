@@ -28,6 +28,34 @@ public:
 };
 
 
+struct HoverColor : public System<HoverColor>, public Receiver<HoverColor>
+{
+	void configure(EventManager &events) override
+	{
+		events.subscribe<LeftClick>(*this);
+	}
+
+	void receive(const LeftClick &hover)
+	{
+		hovered.push_back(hover.entity);
+	}
+
+	void update(EntityManager &es, EventManager &events, TimeDelta dt) override
+	{
+		for (Entity entity : hovered)
+		{
+			entity.assign<Ease<double, Radians, Body>>([](Body::Handle body) -> Radians& { return body->rotation; },
+				entity.component<Body>()->rotation,
+				(rand() % 20 + 1) * M_PI + M_PI/4,
+				2000,
+				&ease_inout_sine<double, Radians>);
+		}
+		hovered.clear();
+	}
+
+	std::vector<Entity> hovered;
+};
+
 
 class BasicEntities : public EntityX {
 public:
@@ -37,10 +65,13 @@ public:
 		systems.add<EasingSystem<double, Radians, Body>>();
 		render_system = std::make_shared<CairoRenderSystem>();
 		systems.add(render_system);
+		mouse_system = std::make_shared<MouseSystem>();
+		systems.add(mouse_system);
+		systems.add<HoverColor>();
 		systems.configure();
 
 
-		const int ENTITY_COUNT = 750;
+		const int ENTITY_COUNT = 1500;
 		for (int i = 0; i < ENTITY_COUNT; ++i)
 		{
 			entityx::Entity entity = entities.create();
@@ -70,26 +101,8 @@ public:
 														20*M_PI + M_PI/4,
 														10000,
 														&ease_inout_sine<double, Radians>);
+			entity.assign<Mouseable>();
 		}
-
-		/*entityx::Entity entity = entities.create();
-		double y = rand() % int(720 * 0.8) + 20;
-		entity.assign<Body>(Vector2d(640-50, 360-50),
-							Vector2d(10, 10),
-							rand() % 360 / 360.0 * 2*M_PI);
-		entity.assign<Renderable>(vibrant::Rectangle({ 0, Hsv(0,		0,	0) },
-													 {    Rgb(1,	1,	1) }));
-		entity.assign<Ease<double, Vector2d, Body>>([](Body::Handle body) -> Vector2d& { return body->size; },
-													entity.component<Body>()->size,
-													Vector2d(100, 100),
-													10000,
-													&ease_out_quad<double, Vector2d>);
-		entity.assign<Ease<double, Radians, Body>>([](Body::Handle body) -> Radians& { return body->rotation; },
-													entity.component<Body>()->rotation,
-													20*M_PI,
-													10000,
-													&ease_inout_sine<double, Radians>);*/
-
 	}
 
 	void update(TimeDelta dt, cairo_t* context)
@@ -97,11 +110,15 @@ public:
 		render_system->setContext(context);
 		systems.update<EasingSystem<double, Vector2d, Body>>(dt);
 		systems.update<EasingSystem<double, Radians, Body>>(dt);
+		systems.update<HoverColor>(dt);
 		systems.update<CairoRenderSystem>(dt);
 	}
 
+	void updateMouse(MouseUpdate mouse) { mouse_system->update(entities, events, mouse); }
+
 private:
 	std::shared_ptr<CairoRenderSystem> render_system;
+	std::shared_ptr<MouseSystem> mouse_system;
 };
 
 class RefreshTimer : public wxTimer
@@ -127,6 +144,7 @@ public:
 	void onPaint(wxPaintEvent& event);
 	void onRefreshTimer(wxTimerEvent& event) { Refresh(); }
 	void onIdle(wxIdleEvent& event);
+	void onMouse(wxMouseEvent& event);
 	void draw(wxDC& dc);
 
 private:
@@ -146,6 +164,7 @@ wxBEGIN_EVENT_TABLE(SimpleVibrantFrame, wxFrame)
 	EVT_PAINT(SimpleVibrantFrame::onPaint)
 	//EVT_TIMER(-1, SimpleVibrantFrame::onRefreshTimer)
 	EVT_IDLE(SimpleVibrantFrame::onIdle)
+	EVT_MOUSE_EVENTS(SimpleVibrantFrame::onMouse)
 wxEND_EVENT_TABLE()
 
 wxIMPLEMENT_APP(SimpleVibrantApp);
@@ -235,5 +254,23 @@ void SimpleVibrantFrame::onIdle(wxIdleEvent& event)
 	wxClientDC dc(this);
     draw(dc);
     event.RequestMore(); // render continuously, not only once on idle
+}
+
+void SimpleVibrantFrame::onMouse(wxMouseEvent& event)
+{
+	MouseUpdate mouse;
+
+	mouse.position	= Vector2d(event.GetX(), event.GetY());
+
+	if (event.LeftDown())
+		mouse.left = ButtonState::Pressed;
+	else if (event.LeftUp())
+		mouse.left = ButtonState::Released;
+	else if (event.LeftIsDown())
+		mouse.left = ButtonState::Down;
+	else if (event.LeftDClick())
+		mouse.left = ButtonState::DoubleClicked;
+
+	basic_entities.updateMouse(mouse);
 }
 

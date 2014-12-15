@@ -24,6 +24,32 @@ struct Vector2
 	Vector2() : x(0), y(0) { }
 	Vector2(Ty arg_x, Ty arg_y) : x(arg_x), y(arg_y) { }
 
+	template<typename PosV, typename SizeV, typename Rotation>
+	bool intersects(PosV position, SizeV size, Rotation rotation)
+	{ 
+		auto x1 = cos(rotation) * -size.x / 2.0 + position.x,
+			 x2 = cos(rotation) *  size.x / 2.0 + position.x,
+			 y1 = sin(rotation) * -size.y / 2.0 + position.y,
+			 y2 = sin(rotation) *  size.y / 2.0 + position.y;
+
+		auto a = PosV(x1, y1),
+			 b = PosV(x2, y1),
+			 c = PosV(x1, y2),
+			 d = PosV(x2, y2);
+
+		auto triangle_area = [](PosV a, PosV b, PosV c)
+		{
+			return fabs((a.x*(b.y - c.y) + b.x*(c.y - a.y) + c.x*(a.y - b.y)) / 2.0);
+		};
+
+		auto total_area = triangle_area(a, *this, d) +
+						  triangle_area(d, *this, c) +
+						  triangle_area(c, *this, b) +
+						  triangle_area(*this, b, a);
+
+		return total_area <= size.x * size.y;
+	}
+
 	Vector2<Ty> operator-() const { return Vector2<Ty>(-x, -y); }
 
 	Ty x;

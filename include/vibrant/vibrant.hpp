@@ -7,5 +7,6 @@
 #include "vibrant/renderable.hpp"
 #include "vibrant/body.hpp"
 #include "vibrant/ease.hpp"
+#include "vibrant/mouse.hpp"
 
 #endif // VIBRANT_VIBRANT_HPP

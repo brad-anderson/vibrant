@@ -14,6 +14,7 @@
     <ClInclude Include="..\..\..\include\vibrant\body.hpp" />
     <ClInclude Include="..\..\..\include\vibrant\color.hpp" />
     <ClInclude Include="..\..\..\include\vibrant\ease.hpp" />
+    <ClInclude Include="..\..\..\include\vibrant\mouse.hpp" />
     <ClInclude Include="..\..\..\include\vibrant\renderable.hpp" />
     <ClInclude Include="..\..\..\include\vibrant\vector.hpp" />
     <ClInclude Include="..\..\..\include\vibrant\vibrant.hpp" />
@@ -26,6 +27,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="..\..\..\source\mouse.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{CE2C5203-0F9D-4840-B5F7-35FCA42BB132}</ProjectGuid>
