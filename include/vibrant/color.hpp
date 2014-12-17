@@ -9,6 +9,7 @@ struct Hsv;
 
 struct Rgb
 {
+	Rgb() : r(0), g(0), b(0), a(1) { }
 	Rgb(double r, double g, double b, double a=1.0) : r(r), g(g), b(b), a(a) { }
 
 	operator Hsl() const;
@@ -16,6 +17,21 @@ struct Rgb
 
 	double r, g, b, a;
 };
+
+// So easing functions work
+Rgb operator+(Rgb lhs, Rgb rhs);
+Rgb operator-(Rgb lhs, Rgb rhs);
+Rgb operator*(Rgb lhs, Rgb rhs);
+
+Rgb operator*(Rgb lhs, double rhs);
+Rgb operator/(Rgb lhs, double rhs);
+Rgb operator+(Rgb lhs, double rhs);
+
+Rgb operator*(double lhs, Rgb rhs);
+Rgb operator/(double lhs, Rgb rhs);
+Rgb operator+(double lhs, Rgb rhs);
+
+Rgb operator-(const Rgb& rhs);
 
 struct Hsl
 {

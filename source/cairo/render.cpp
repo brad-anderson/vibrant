@@ -41,7 +41,7 @@ public:
     {
 		cairo_save(context);
 
-		cairo_translate(context, body->position.x + body->size.x / 2, body->position.y + body->size.y / 2);
+		cairo_translate(context, body->position.x, body->position.y);
 		cairo_rotate(context, body->rotation);
 		cairo_rectangle(context,
 						-body->size.x / 2, -body->size.y / 2,

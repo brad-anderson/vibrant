@@ -1,6 +1,10 @@
 #pragma once
 #ifndef VIBRANT_VECTOR_HPP
 
+#ifndef M_TAU
+#define M_TAU 6.28318530717958647693
+#endif
+
 namespace vibrant {
 
 template <class Ty>

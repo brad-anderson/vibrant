@@ -42,13 +42,27 @@ struct HoverColor : public System<HoverColor>, public Receiver<HoverColor>
 
 	void update(EntityManager &es, EventManager &events, TimeDelta dt) override
 	{
-		for (Entity entity : hovered)
+		/*if (!hovered.empty())
 		{
-			entity.assign<Ease<double, Radians, Body>>([](Body::Handle body) -> Radians& { return body->rotation; },
-				entity.component<Body>()->rotation,
-				(rand() % 20 + 1) * M_PI + M_PI/4,
-				2000,
-				&ease_inout_sine<double, Radians>);
+			fill_color_to(hovered.back(), Rgb(1,1,1), 400, Ease::OutSine);
+			resize_to(hovered.back(), { 2000, 2000 }, 400, Ease::OutSine);
+		}*/
+		if (hovered.empty())
+			return;
+
+		const int kleidoscope_count = 40;
+		for (int i = 0; i < hovered.size(); ++i)
+		{
+			auto entity = hovered[hovered.size()-i-1];
+			if (i > kleidoscope_count)
+			{
+				entity.destroy();
+				continue;
+			}
+
+			fill_color_to(entity, Hsv(i/(double)kleidoscope_count, 1, i%2), 1000, Ease::InOutSine);
+			resize_to(entity, { (double)i*30, (double)i*30 }, 1000, Ease::InOutLinear);
+			rotate_to(entity, M_TAU * 100*i, 10000000, Ease::InOutLinear);
 		}
 		hovered.clear();
 	}
@@ -61,8 +75,8 @@ class BasicEntities : public EntityX {
 public:
 	BasicEntities()
 	{
-		systems.add<EasingSystem<double, Vector2d, Body>>();
-		systems.add<EasingSystem<double, Radians, Body>>();
+		systems.add<EasingSystem<Body>>();
+		systems.add<EasingSystem<Renderable>>();
 		render_system = std::make_shared<CairoRenderSystem>();
 		systems.add(render_system);
 		mouse_system = std::make_shared<MouseSystem>();
@@ -71,46 +85,49 @@ public:
 		systems.configure();
 
 
-		const int ENTITY_COUNT = 1500;
+		const int ENTITY_COUNT = 750;
 		for (int i = 0; i < ENTITY_COUNT; ++i)
 		{
 			entityx::Entity entity = entities.create();
 
-			entity.assign<Body>(Vector2d(sin(i/(double)ENTITY_COUNT * 2*M_PI)*300 + 640-50,
-										 cos(i/(double)ENTITY_COUNT * 2*M_PI)*300 + 360-50),
+			entity.assign<Body>(Vector2d(sin(i/(double)ENTITY_COUNT * M_TAU)*270 + 640-10,
+										 cos(i/(double)ENTITY_COUNT * M_TAU)*270 + 360-25),
 								Vector2d(100, 100),
-								rand() % 360 / 360.0 * 2 * M_PI);
+								rand() % 360 / 360.0 * M_TAU);
 			entity.assign<Renderable>(vibrant::Rectangle({ 0, Hsv(0,		0,	0, 0) },
-														 {    Hsv(i/(double)ENTITY_COUNT,	1,	1, 0.015) } ),
+														 {    Hsv(i/(double)ENTITY_COUNT,	1,	1, 750.0/ENTITY_COUNT*0.015) } ),
 									  i);
 
-			// TODO: DSL for easing because this is clunky
-			entity.assign<Ease<double, Vector2d, Body>>([](Body::Handle body) -> Vector2d& { return body->position; },
+			/*
+			entity.assign<FastEase<double, Vector2d, Body>>([](Body::Handle body) -> Vector2d& { return body->position; },
 														entity.component<Body>()->position,
 														Vector2d(640-50, 360-50),
 														10000,
 														&ease_out_elastic<double, Vector2d>);
-			/* TODO: Support more than one easing for a given type
-			entity.assign<Ease<double, Vector2d, Body>>([](Body::Handle body) -> Vector2d& { return body->size; },
-														entity.component<Body>()->size,
-														Vector2d(5, 5),
-														10000,
-														&ease_out_quad<double, Vector2d>);*/
-			entity.assign<Ease<double, Radians, Body>>([](Body::Handle body) -> Radians& { return body->rotation; },
+			entity.assign<FastEase<double, Radians, Body>>([](Body::Handle body) -> Radians& { return body->rotation; },
 														entity.component<Body>()->rotation,
-														20*M_PI + M_PI/4,
+														10*M_TAU + M_TAU/8,
 														10000,
 														&ease_inout_sine<double, Radians>);
+			*/
+
+			move_to(entity, { 640 - 10, 360 - 25 }, 10000, Ease::OutElastic, 5000);
+			rotate_to(entity, 10 * M_TAU + M_TAU / 8, 15000, Ease::InOutSine);
+
+
 			entity.assign<Mouseable>();
 		}
 	}
 
 	void update(TimeDelta dt, cairo_t* context)
 	{
-		render_system->setContext(context);
-		systems.update<EasingSystem<double, Vector2d, Body>>(dt);
-		systems.update<EasingSystem<double, Radians, Body>>(dt);
+		//systems.update<FastEasingSystem<double, Vector2d, Body>>(dt);
+		//systems.update<FastEasingSystem<double, Radians, Body>>(dt);
+		systems.update<EasingSystem<Body>>(dt);
+		systems.update<EasingSystem<Renderable>>(dt);
 		systems.update<HoverColor>(dt);
+
+		render_system->setContext(context);
 		systems.update<CairoRenderSystem>(dt);
 	}
 
@@ -203,7 +220,8 @@ void SimpleVibrantFrame::draw(wxDC& dc)
 	}
 
 	auto delta_ms = std::chrono::duration_cast<std::chrono::milliseconds>(current_time - last_frame_end).count();
-	if (delta_ms < 16.67)
+	//if (delta_ms < 16.67)
+	if (delta_ms < 5.0)
 		return;
 	last_frame_end = std::chrono::steady_clock::now();
 
@@ -220,7 +238,7 @@ void SimpleVibrantFrame::draw(wxDC& dc)
 
 
 	cairo_t* context = cairo_create(backbuffer);
-	cairo_set_source_rgb(context, 1, 1, 1);
+	cairo_set_source_rgb(context, 0.0, 0.0, 0.0);
 	cairo_paint(context);
 
 

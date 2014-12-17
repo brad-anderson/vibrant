@@ -4,6 +4,20 @@
 
 namespace vibrant {
 
+Rgb operator+(Rgb lhs, Rgb rhs) { return Rgb(lhs.r+rhs.r, lhs.g+rhs.g, lhs.b+rhs.b, lhs.a+rhs.a); }
+Rgb operator-(Rgb lhs, Rgb rhs) { return Rgb(lhs.r-rhs.r, lhs.g-rhs.g, lhs.b-rhs.b, lhs.a-rhs.a); }
+Rgb operator*(Rgb lhs, Rgb rhs) { return Rgb(lhs.r*rhs.r, lhs.g*rhs.g, lhs.b*rhs.b, lhs.a*rhs.a); }
+
+Rgb operator*(Rgb lhs, double rhs) { return Rgb(lhs.r*rhs, lhs.g*rhs, lhs.b*rhs, lhs.a*rhs); }
+Rgb operator/(Rgb lhs, double rhs) { return Rgb(lhs.r/rhs, lhs.g/rhs, lhs.b/rhs, lhs.a/rhs); }
+Rgb operator+(Rgb lhs, double rhs) { return Rgb(lhs.r+rhs, lhs.g+rhs, lhs.b+rhs, lhs.a+rhs); }
+
+Rgb operator*(double lhs, Rgb rhs) { return Rgb(lhs*rhs.r, lhs*rhs.g, lhs*rhs.b, lhs*rhs.a); }
+Rgb operator/(double lhs, Rgb rhs) { return Rgb(lhs/rhs.r, lhs/rhs.g, lhs/rhs.b, lhs/rhs.a); }
+Rgb operator+(double lhs, Rgb rhs) { return Rgb(lhs+rhs.r, lhs+rhs.g, lhs+rhs.b, lhs+rhs.a); }
+
+Rgb operator-(const Rgb& rhs) { return Rgb(-rhs.r, -rhs.g, -rhs.b, -rhs.a); }
+
 Rgb::operator Hsl() const
 {
 	assert(!(r < 0 || r > 1) && !(g < 0 || g > 1) && !(b < 0 || b > 1));
