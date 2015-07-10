@@ -90,8 +90,8 @@ public:
 		{
 			entityx::Entity entity = entities.create();
 
-			entity.assign<Body>(Vector2d(sin(i/(double)ENTITY_COUNT * M_TAU)*270 + 640-10,
-										 cos(i/(double)ENTITY_COUNT * M_TAU)*270 + 360-25),
+			entity.assign<Body>(Vector2d(sin(i/(double)ENTITY_COUNT * M_TAU)*270 + 632,
+										 cos(i/(double)ENTITY_COUNT * M_TAU)*270 + 340),
 								Vector2d(100, 100),
 								rand() % 360 / 360.0 * M_TAU);
 			entity.assign<Renderable>(vibrant::Rectangle({ 0, Hsv(0,		0,	0, 0) },
@@ -111,8 +111,8 @@ public:
 														&ease_inout_sine<double, Radians>);
 			*/
 
-			move_to(entity, { 640 - 10, 360 - 25 }, 10000, Ease::OutElastic, 5000);
-			rotate_to(entity, 10 * M_TAU + M_TAU / 8, 15000, Ease::InOutSine);
+			move_to(entity, { 632, 340 }, 10000, Ease::OutElastic, 5000);
+			rotate_to(entity, 10 * M_TAU + M_TAU / 8, 15000, Ease::OutSine);
 
 
 			entity.assign<Mouseable>();
@@ -191,6 +191,8 @@ bool SimpleVibrantApp::OnInit()
 {
     SimpleVibrantFrame *frame = new SimpleVibrantFrame( "Simple Vibrant Demo", wxPoint(50, 50), wxSize(1280, 720) );
     frame->Show(true);
+	wxSize size = frame->GetClientSize();
+
     return true;
 }
 
