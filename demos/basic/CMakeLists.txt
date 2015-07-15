@@ -15,7 +15,7 @@ target_link_libraries(vibrant-demo-basic
 )
 
 if(WIN32)
-    # defined in vibrant-cairo
+    # Cairo_BIN_DIRS defined in vibrant-cairo
     file(COPY ${Cairo_BIN_DIRS}/libcairo-2.dll
         DESTINATION ${CMAKE_CURRENT_BINARY_DIR} NO_SOURCE_PERMISSIONS)
     file(COPY ${Cairo_BIN_DIRS}/libfontconfig-1.dll
