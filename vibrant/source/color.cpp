@@ -185,7 +185,7 @@ Hsv::operator Rgb() const
     double var_h = h * 6;
     if (fabs(var_h - 6) < 0.000001) var_h = 0;
 
-    int var_i = floor(var_h);
+    int var_i = static_cast<int>(floor(var_h));
     double var_1 = v * (1 - s);
     double var_2 = v * (1 - s * (var_h - var_i));
     double var_3 = v * (1 - s * (1 - (var_h - var_i)));
