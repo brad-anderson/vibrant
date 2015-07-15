@@ -6,52 +6,49 @@
 
 #include "vibrant/color.hpp"
 
-namespace vibrant {
-
+namespace vibrant
+{
 struct Stroke
 {
-	double width;
-	Rgb color;
-	// TODO: Style
+  double width;
+  Rgb color;
+  // TODO: Style
 };
 
 struct Fill
 {
-	Rgb color;
-	// TODO: Gradients
+  Rgb color;
+  // TODO: Gradients
 };
-
 
 struct Line
 {
-	// rotates around position of Body
+  // rotates around position of Body
 
-	Line(Stroke stroke) : stroke(stroke) { }
+  Line(Stroke stroke) : stroke(stroke) {}
 
-	Stroke stroke;
+  Stroke stroke;
 };
 
 struct Rectangle
 {
-	// rotates around center of Body
+  // rotates around center of Body
 
-	Rectangle(Stroke stroke, Fill fill) : stroke(stroke), fill(fill) { }
+  Rectangle(Stroke stroke, Fill fill) : stroke(stroke), fill(fill) {}
 
-	Stroke stroke;
-	Fill fill;
+  Stroke stroke;
+  Fill fill;
 };
-
 
 typedef boost::variant<Line, Rectangle> RenderPrimitive;
 
 struct Renderable : entityx::Component<Renderable>
 {
-	Renderable(RenderPrimitive primitive, double z) : primitive(primitive), z(z) { }
+  Renderable(RenderPrimitive primitive, double z) : primitive(primitive), z(z) {}
 
-	RenderPrimitive primitive;
-	double z;
+  RenderPrimitive primitive;
+  double z;
 };
-
 }
 
-#endif // VIBRANT_RENDERABLE_HPP
+#endif  // VIBRANT_RENDERABLE_HPP

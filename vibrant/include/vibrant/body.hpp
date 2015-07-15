@@ -5,20 +5,21 @@
 
 #include "vibrant/vector.hpp"
 
-namespace vibrant {
-
+namespace vibrant
+{
 typedef double Radians;
 
 struct Body : entityx::Component<Body>
 {
-	Body(Vector2d position, Vector2d size, Radians rotation=0)
-		: position(position), size(size), rotation(rotation) { }
+  Body(Vector2d position, Vector2d size, Radians rotation = 0)
+      : position(position), size(size), rotation(rotation)
+  {
+  }
 
-	Vector2d position;
-	Vector2d size;
-	Radians rotation;
+  Vector2d position;
+  Vector2d size;
+  Radians rotation;
 };
-
 }
 
-#endif // VIBRANT_BODY_HPP
+#endif  // VIBRANT_BODY_HPP
