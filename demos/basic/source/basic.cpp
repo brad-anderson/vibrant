@@ -31,35 +31,30 @@ struct HoverColor : public System<HoverColor>, public Receiver<HoverColor>
 {
   void configure(EventManager& events) override { events.subscribe<LeftClick>(*this); }
 
-  void receive(const LeftClick& hover) { hovered.push_back(hover.entity); }
+  void receive(const LeftClick& event) { clicked.push_back(event.entity); }
 
   void update(EntityManager& es, EventManager& events, TimeDelta dt) override
   {
-    /*if (!hovered.empty())
-    {
-            fill_color_to(hovered.back(), Rgb(1,1,1), 400, Ease::OutSine);
-            resize_to(hovered.back(), { 2000, 2000 }, 400, Ease::OutSine);
-    }*/
-    if (hovered.empty()) return;
+    if (clicked.empty()) return;
 
-    const int kleidoscope_count = 40;
-    for (int i = 0; i < hovered.size(); ++i)
+    const int max_count = 40;
+    for (int i = 0; i < clicked.size(); ++i)
     {
-      auto entity = hovered[hovered.size() - i - 1];
-      if (i > kleidoscope_count)
+      auto entity = clicked[clicked.size() - i - 1];
+      if (i > max_count)
       {
         entity.destroy();
         continue;
       }
 
-      fill_color_to(entity, Hsv(i / (double)kleidoscope_count, 1, i % 2), 1000, Ease::InOutSine);
+      fill_color_to(entity, Hsv(i / (double)max_count, 1, i % 2), 1000, Ease::InOutSine);
       resize_to(entity, {(double)i * 30, (double)i * 30}, 1000, Ease::InOutLinear);
       rotate_to(entity, M_TAU * 100 * i, 10000000, Ease::InOutLinear);
     }
-    hovered.clear();
+    clicked.clear();
   }
 
-  std::vector<Entity> hovered;
+  std::vector<Entity> clicked;
 };
 
 class BasicEntities : public EntityX
@@ -166,12 +161,16 @@ class SimpleVibrantFrame : public wxFrame
   wxDECLARE_EVENT_TABLE();
 };
 
-wxBEGIN_EVENT_TABLE(SimpleVibrantFrame, wxFrame) EVT_PAINT(SimpleVibrantFrame::onPaint)
-    // EVT_TIMER(-1, SimpleVibrantFrame::onRefreshTimer)
-    EVT_IDLE(SimpleVibrantFrame::onIdle) EVT_MOUSE_EVENTS(SimpleVibrantFrame::onMouse)
-        wxEND_EVENT_TABLE()
+// clang-format off
+wxBEGIN_EVENT_TABLE(SimpleVibrantFrame, wxFrame)
+  EVT_PAINT(SimpleVibrantFrame::onPaint)
+  // EVT_TIMER(-1, SimpleVibrantFrame::onRefreshTimer)
+  EVT_IDLE(SimpleVibrantFrame::onIdle)
+  EVT_MOUSE_EVENTS(SimpleVibrantFrame::onMouse)
+wxEND_EVENT_TABLE()
 
-            wxIMPLEMENT_APP(SimpleVibrantApp);
+wxIMPLEMENT_APP(SimpleVibrantApp);
+// clang-format on
 
 bool SimpleVibrantApp::OnInit()
 {
