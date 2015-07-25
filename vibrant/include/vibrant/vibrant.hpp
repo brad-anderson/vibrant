@@ -8,5 +8,6 @@
 #include "vibrant/body.hpp"
 #include "vibrant/ease.hpp"
 #include "vibrant/mouse.hpp"
+#include "vibrant/layout.hpp"
 
 #endif  // VIBRANT_VIBRANT_HPP
